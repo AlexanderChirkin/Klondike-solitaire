@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace KlondikeLogic
 {
-    class Card
+    public class Card
     {
-        public Suit Suit { get; private set; }
-        public Rank Rank { get; private set; }
+        public Suits Suits { get; private set; }
+        public Ranks Ranks { get; private set; }
+        public bool FaceUp { get; set; }
 
-        public Card(Suit suit, Rank rank)
+        public Card(Suits suits, Ranks ranks, bool faceUp = false)
         {
-            this.Suit = suit;
-            this.Rank = rank;
+            this.Suits = suits;
+            this.Ranks = ranks;
+            this.FaceUp = faceUp;
         }
     }
 }

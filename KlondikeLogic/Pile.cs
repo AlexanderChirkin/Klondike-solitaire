@@ -8,15 +8,23 @@ using System.Threading.Tasks;
 
 namespace KlondikeLogic
 {
-    class Pile
+    public class Pile
     {
-        public List<Card> Cards;
+        public Stack<Card> Cards;
 
-        public bool PutInPile(List<Card> cards)
+        public Pile()
+        {
+            Cards = new Stack<Card>();
+        }
+
+        public bool PutInPile(Stack<Card> cards)
         {
             if (TwoCard(Cards.Last(),cards.First()))
             {
-                Cards.AddRange(cards);
+               while (cards.Count>0)
+                {
+                    Cards.Push(cards.Pop());
+                }
                 return true;
             }
             else
@@ -25,15 +33,14 @@ namespace KlondikeLogic
             }
         }
 
-        public List<Card> TakeFromPile(int n)
+        public Stack<Card> TakeFromPile(int n)
         {
-            List<Card> list = new List<Card>();
+            Stack<Card> list = new Stack<Card>();
             if (IsRight(n))
             { 
-                for (int i = Cards.Count - n; i < Cards.Count; i++)
+                for (int i = 0; i<n; i++)
                 {
-                    list.Add(Cards[i]);
-                    list.RemoveAt(i);
+                   list.Push(Cards.Pop());
                 }
             }
             return list;
@@ -45,8 +52,8 @@ namespace KlondikeLogic
             {
                 for (int i = Cards.Count - n; i < Cards.Count - 1; i++)
                 {
-                    if (!TwoCard(Cards[i], Cards[i + 1]))
-                    return false;
+                 //   if (!TwoCard(Cards[i], Cards[i + 1]))
+                  //  return false;
                 }
 
                 return true;
@@ -59,7 +66,12 @@ namespace KlondikeLogic
 
         private bool TwoCard(Card lower, Card upper)
         {
-            return lower.Rank + 1 == upper.Rank && ((int) lower.Suit + (int) upper.Suit) % 2 == 0;
+            return lower.Ranks + 1 == upper.Ranks && ((int) lower.Suits + (int) upper.Suits) % 2 == 0;
+        }
+
+        private void TernUpperCard()
+        {
+            Cards.Peek().FaceUp = true;
         }
     }
 }

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KlondikeLogic", "KlondikeLogic\KlondikeLogic.csproj", "{C024663D-5B33-4B53-9025-A09ADD786C37}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KlondikeWindowsForms", "KlondikeWindowsForms\KlondikeWindowsForms.csproj", "{DAA899CB-1E0C-43A6-A54B-F030D577D620}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C024663D-5B33-4B53-9025-A09ADD786C37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C024663D-5B33-4B53-9025-A09ADD786C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C024663D-5B33-4B53-9025-A09ADD786C37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAA899CB-1E0C-43A6-A54B-F030D577D620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAA899CB-1E0C-43A6-A54B-F030D577D620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAA899CB-1E0C-43A6-A54B-F030D577D620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAA899CB-1E0C-43A6-A54B-F030D577D620}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

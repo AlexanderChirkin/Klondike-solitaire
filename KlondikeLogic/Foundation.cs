@@ -6,22 +6,38 @@ using System.Threading.Tasks;
 
 namespace KlondikeLogic
 {
-    class Foundation
+    public class Foundation
     {
-        public Suit Suit { get; private set; }
-        public Queue<Card> HeapCards { get; set; }
+        public Suits Suits { get; private set; }
+        public Stack<Card> HeapCards { get; set; }
+
+        public Foundation(Suits suit)
+        {
+            this.Suits = suit;
+            HeapCards = new Stack<Card>();
+        }
 
         public bool PutInFoundation(Card card)
         {
-            if (card.Suit == Suit && HeapCards.Peek().Rank + 1 == card.Rank)
+            if (card.Suits == Suits && HeapCards.Peek().Ranks + 1 == card.Ranks)
             {
-                HeapCards.Enqueue(card);
+                HeapCards.Push(card);
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        public Card GetFromFoundation()
+        {
+            Card returnedCard = null;
+            if (HeapCards.Count > 0)
+            {
+                returnedCard = HeapCards.Pop();
+            }
+            return returnedCard;
         }
     }
 }

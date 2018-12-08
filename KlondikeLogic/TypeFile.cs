@@ -1,4 +1,4 @@
-﻿enum Suit
+﻿public enum Suits
 {
     Diamonds,
     Clubs,
@@ -6,7 +6,7 @@
     Spades
 }
 
-enum Rank
+public enum Ranks
 {
     Ace,
     Two,
