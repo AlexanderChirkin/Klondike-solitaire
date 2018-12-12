@@ -99,17 +99,6 @@ namespace KlondikeLogic
             }
         }
 
-        private Image GetImageSuit(Suits suit)
-        {
-            if (suit == Suits.Clubs)
-                return Resources.CLUBS;
-            else if (suit == Suits.Diamonds)
-                return Resources.DIAMONDS;
-            else if (suit == Suits.Hearts)
-                return Resources.HEARTS;
-            else return Resources.SPADES;
-        }
-
         private void DrawPiles()
         {
             int i = 0;
@@ -205,6 +194,17 @@ namespace KlondikeLogic
             }
 
             return pileIndex != -1 && cardIndex != -1;
+        }
+
+        private Image GetImageSuit(Suits suit)
+        {
+            if (suit == Suits.Clubs)
+                return Resources.CLUBS;
+            else if (suit == Suits.Diamonds)
+                return Resources.DIAMONDS;
+            else if (suit == Suits.Hearts)
+                return Resources.HEARTS;
+            else return Resources.SPADES;
         }
 
         private Image GetImageCard(Card card)
