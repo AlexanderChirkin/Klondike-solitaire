@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms.PropertyGridInternal;
+﻿using System.Drawing;
 using KlondikeWindowsForms.Properties;
-using KlondikeLogic;
 
 
 namespace KlondikeLogic
@@ -29,17 +20,23 @@ namespace KlondikeLogic
         }
 
         public GameField Game { get; set; }
+        public int MouseX { get; set; }
+        public int MouseY { get; set; }
         private Graphics Drawer { get; set; }
         private int CardWidth { get; set; }
         private int CardHigth { get; set; }
         private int FoundationsY { get; set; }
         private int PilesY { get; set; }
+        private int DxUsersCards { get; set; }
+        private int DyUsersCards { get; set; }
         private int[] PilesX { get; set; }
         private int[] CardInPileY { get; set; }
 
         public Draw(Bitmap field)
         {
             this.Field = field;
+            DxUsersCards = 0;
+            DyUsersCards = 0;
         }
 
         public void DrawAllObjects()
@@ -48,11 +45,12 @@ namespace KlondikeLogic
             DrawDeck();
             DrawFoundations();
             DrawPiles();
+            if (Game.CardOnUsersHand.Flag)
+                DrawUsersCard();
         }
 
         private void CalculateCoordinates()
         {
-
             CardWidth = field.Width / 11;
             CardHigth = CardWidth * 19 / 14; // 19:14 - пропорции карты
             FoundationsY = CardHigth / 5;
@@ -62,7 +60,7 @@ namespace KlondikeLogic
                 PilesX[i] = CardWidth * 1 / 2 + CardWidth * 3 / 2 * i;
             CardInPileY = new int[19];
             for (int i = 0; i < 19; i++)
-                CardInPileY[i] = PilesY + CardHigth / 6 * i;
+                CardInPileY[i] = CardHigth / 6 * i;
         }
 
         private void DrawDeck()
@@ -92,7 +90,7 @@ namespace KlondikeLogic
             {
                 card = foundation.PileOfCards.Count > 0
                     ? GetImageCard(foundation.PileOfCards.Peek())
-                    : GetImageSuit(foundation.Suits);
+                    : GetImageSuit(foundation.Suit);
                 Drawer.DrawImage(card,
                     new Rectangle(PilesX[i], FoundationsY, CardWidth, CardHigth));
                 i++;
@@ -113,7 +111,7 @@ namespace KlondikeLogic
                     for (int k = list.Length - 1; k >= 0; k--)
                     {
                         imgCard = GetImageCard(list[k]);
-                        Drawer.DrawImage(imgCard, new Rectangle(PilesX[i], CardInPileY[j], CardWidth, CardHigth));
+                        Drawer.DrawImage(imgCard, new Rectangle(PilesX[i], PilesY + CardInPileY[j], CardWidth, CardHigth));
                         j++;
                     }
                 }
@@ -123,6 +121,18 @@ namespace KlondikeLogic
                 }
 
                 i++;
+            }
+        }
+
+        private void DrawUsersCard()
+        {
+            Image imgCard;
+            int j = 0;
+            for (int k = Game.CardOnUsersHand.UsersCards.Count - 1; k >= 0; k--)
+            {
+                imgCard = GetImageCard(Game.CardOnUsersHand.UsersCards[k]);
+                Drawer.DrawImage(imgCard, new Rectangle(MouseX - DxUsersCards, MouseY - DyUsersCards + CardInPileY[j], CardWidth, CardHigth));
+                j++;
             }
         }
 
@@ -136,8 +146,14 @@ namespace KlondikeLogic
         // проверяет попадает ли точка (x;y) в сброшенную колоду
         public bool OnDumpedDeck(int x, int y)
         {
-            return PilesX[1] <= x && x <= PilesX[1] + CardWidth && FoundationsY <= y &&
-                   y <= FoundationsY + CardHigth;
+            bool result = PilesX[1] <= x && x <= PilesX[1] + CardWidth && FoundationsY <= y &&
+                          y <= FoundationsY + CardHigth;
+            if (result)
+            {
+                DxUsersCards = x - PilesX[1];
+                DyUsersCards = y - FoundationsY;
+            }
+            return result;
         }
 
         // проверяет попадает ли точка (x;y) в дом, если да, то index-индекс дома, куда попала точка
@@ -146,16 +162,32 @@ namespace KlondikeLogic
             index = -1;
             if (PilesX[3] <= x && x <= PilesX[3] + CardWidth && FoundationsY <= y &&
                 y <= FoundationsY + CardHigth)
+            {
                 index = 0;
+                DxUsersCards = x - PilesX[3];
+                DyUsersCards = y - FoundationsY;
+            }
             else if (PilesX[4] <= x && x <= PilesX[4] + CardWidth && FoundationsY <= y &&
                      y <= FoundationsY + CardHigth)
+            {
                 index = 1;
+                DxUsersCards = x - PilesX[4];
+                DyUsersCards = y - FoundationsY;
+            }
             else if (PilesX[5] <= x && x <= PilesX[5] + CardWidth && FoundationsY <= y &&
                      y <= FoundationsY + CardHigth)
+            {
                 index = 2;
+                DxUsersCards = x - PilesX[5];
+                DyUsersCards = y - FoundationsY;
+            }
             else if (PilesX[6] <= x && x <= PilesX[6] + CardWidth && FoundationsY <= y &&
                      y <= FoundationsY + CardHigth)
+            {
                 index = 3;
+                DxUsersCards = x - PilesX[6];
+                DyUsersCards = y - FoundationsY;
+            }
             return index != -1;
         }
 
@@ -172,18 +204,20 @@ namespace KlondikeLogic
                     int j;
                     for (j = Game.Piles[i].Cards.Count - 1; j >= 0; j--)
                     {
-                        if (CardInPileY[j] <= y &&
-                            y <= CardInPileY[j] + CardHigth)
+                        if (PilesY + CardInPileY[j] <= y &&
+                            y <= PilesY + CardInPileY[j] + CardHigth)
                         {
                             cardIndex = j;
+                            DxUsersCards = x - PilesX[i];
+                            DyUsersCards = y - PilesY - CardInPileY[j];
                             break;
                         }
                     }
 
                     if (j == -1)
                     {
-                        if (CardInPileY[0] <= y &&
-                            y <= CardInPileY[0] + CardHigth)
+                        if (PilesY + CardInPileY[0] <= y &&
+                            y <= PilesY + CardInPileY[0] + CardHigth)
                         {
                             cardIndex = 0;
                         }
@@ -211,9 +245,9 @@ namespace KlondikeLogic
         {
             if (card.FaceUp == false)
                 return Resources.Back;
-            else if (card.Suits == Suits.Diamonds)
+            else if (card.Suit == Suits.Diamonds)
             {
-                switch (card.Ranks)
+                switch (card.Rank)
                 {
                     case Ranks.Ace:
                         return Resources.DA;
@@ -243,9 +277,9 @@ namespace KlondikeLogic
                         return Resources.DK;
                 }
             }
-            else if (card.Suits == Suits.Clubs)
+            else if (card.Suit == Suits.Clubs)
             {
-                switch (card.Ranks)
+                switch (card.Rank)
                 {
                     case Ranks.Ace:
                         return Resources.CA;
@@ -275,9 +309,9 @@ namespace KlondikeLogic
                         return Resources.CK;
                 }
             }
-            else if (card.Suits == Suits.Hearts)
+            else if (card.Suit == Suits.Hearts)
             {
-                switch (card.Ranks)
+                switch (card.Rank)
                 {
                     case Ranks.Ace:
                         return Resources.HA;
@@ -307,9 +341,9 @@ namespace KlondikeLogic
                         return Resources.HK;
                 }
             }
-            else if (card.Suits == Suits.Spades)
+            else if (card.Suit == Suits.Spades)
             {
-                switch (card.Ranks)
+                switch (card.Rank)
                 {
                     case Ranks.Ace:
                         return Resources.SA;
@@ -342,6 +376,5 @@ namespace KlondikeLogic
 
             return null;
         }
-
     }
 }

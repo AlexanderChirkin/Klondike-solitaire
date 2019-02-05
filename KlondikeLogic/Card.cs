@@ -8,14 +8,14 @@ namespace KlondikeLogic
 {
     public class Card
     {
-        public Suits Suits { get; private set; }
-        public Ranks Ranks { get; private set; }
+        public Suits Suit { get; private set; }
+        public Ranks Rank { get; private set; }
         public bool FaceUp { get; set; }
 
-        public Card(Suits suits, Ranks ranks, bool faceUp = false)
+        public Card(Suits suit, Ranks rank, bool faceUp = false)
         {
-            this.Suits = suits;
-            this.Ranks = ranks;
+            this.Suit = suit;
+            this.Rank = rank;
             this.FaceUp = faceUp;
         }
     }

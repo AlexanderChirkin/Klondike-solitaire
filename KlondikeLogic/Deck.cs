@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +9,11 @@ namespace KlondikeLogic
 {
     public class Deck
     {
-        public Stack<Card> MainDeck { get; set; } // стопка колоды, которая лежит рубашкой вверх
-        public Stack<Card> DumpedDeck { get; set; } // стопка, в которую сбрасываются карты из колоды
+        public Stack<Card> MainDeck { get; set; } // стопка колоды, которая лежит рубашкой вверх - основная колода
+
+        public Stack<Card>
+            DumpedDeck
+        { get; set; } // стопка, в которую сбрасываются карты из колоды - сброшенная колода
 
         public Deck()
         {
@@ -19,42 +23,10 @@ namespace KlondikeLogic
             Shuffle();
         }
 
-        private void CreateDeck()
-        {
-            for (int i = 0; i < 13; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    MainDeck.Push(new Card((Suits) j, (Ranks) i));
-                }
-            }
-        }
-
-        private void Shuffle()
-        {
-            int length = MainDeck.Count;
-            Card[] deck = new Card[length];
-            for (int i = 0; i < length; i++) // выталкиваем все карты из стека в массив
-            {
-                deck[i] = MainDeck.Pop();
-            }
-
-            Random rnd = new Random();
-            for (int i = deck.Length - 1; i >= 1; i--) // перемешиваем массив
-            {
-                int j = rnd.Next(i + 1);
-                var tmp = deck[j];
-                deck[j] = deck[i];
-                deck[i] = tmp;
-            }
-
-            foreach (var card in deck) // загоняем обратно с стек
-            {
-                MainDeck.Push(card);
-            }
-        }
-
-        public void FoldCard() // сбрасывает одну карту
+        /// <summary>
+        /// Сбрасывает одну карту из основной колоды в сброшенную. Если основная колода пуста перекладывает все карты из сброшенной калоды в основную.
+        /// </summary>
+        public void FoldCard()
         {
             if (MainDeck.Count > 0) // если в колоде есть карты, то сбрасываем одну
             {
@@ -74,23 +46,53 @@ namespace KlondikeLogic
             }
         }
 
-        public Card TakeFromDeck()
+        /// <summary>
+        /// Снятие одной карты из сброшенной колоды
+        /// </summary>
+        /// <param name="card">Снятая карта(лист из одной карты). Если сброшенная колода пуста, будет равно null</param>
+        /// <returns>True, если снятие карты прошло успешно; false, если карта не снята (сброшенная колода пуста)</returns>
+        public bool GetCard(out List<Card> card)
         {
-            Card card = null;
-            if (DumpedDeck.Count > 0)
-                card = DumpedDeck.Pop();
-            return card;
-        }
-
-        public bool CheckTake(out Card card) //проверяет можно ли взять карту из колоды
-        {
-            card = null;
             if (DumpedDeck.Count > 0)
             {
-                card = DumpedDeck.Peek();
+                card = new List<Card>();
+                card.Add(DumpedDeck.Pop());
                 return true;
             }
-            return false;
+            else
+            {
+                card = null;
+                return false;
+            }
+        }
+
+        public void PutCardsWithoutCheck(List<Card> cards)
+        {
+            if (cards.Count == 1)
+                DumpedDeck.Push(cards[0]);
+        }
+
+        private void CreateDeck()
+        {
+            for (int i = 0; i < Enum.GetNames(typeof(Ranks)).Length; i++)
+            {
+                for (int j = 0; j < Enum.GetNames(typeof(Suits)).Length; j++)
+                {
+                    MainDeck.Push(new Card((Suits)j, (Ranks)i));
+                }
+            }
+        }
+
+        private void Shuffle() // перемешивает карты в MainDeck
+        {
+            Random rnd = new Random();
+            List<Card> list = new List<Card>();
+            list = MainDeck.OrderBy(item => rnd.Next()).ToList();
+            MainDeck.Clear();
+            foreach (var card in list)
+            {
+                MainDeck.Push(card);
+            }
         }
     }
 }

@@ -45,6 +45,7 @@
             this.pictureBoxField.TabStop = false;
             this.pictureBoxField.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBoxField_MouseClick);
             this.pictureBoxField.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxField_MouseDown);
+            this.pictureBoxField.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBoxField_MouseMove);
             this.pictureBoxField.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBoxField_MouseUp);
             // 
             // menuStrip
