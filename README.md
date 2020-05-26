@@ -16,7 +16,7 @@ Deck cointain of two card piles - MainDeck (it turned flop) and DumpedDeck (it t
 It is place, where user must lay down all cards by suit.
 
 ####  Pile
-Pile on table. User can put and take one or more carsd.
+Pile on table. User can put and take one or more cards.
 
 ####  CardOnUsersHand
 Cards which users are moving now. Also it contain method of return card.
